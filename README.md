@@ -84,6 +84,18 @@ Generate A3-sized grid with black lines:
 tianzige -p a3 -c "#000000" output.pdf
 ```
 
+Generate template files for all formats and sizes:
+```bash
+tianzige --create-templates templates/    # Create in specified directory
+tianzige --create-templates              # Create in sample_pdf/ directory
+```
+
+The template generator creates PDFs for all combinations of:
+- Paper sizes: A3, A4, A5, A6, B4, B5, Letter, Legal
+- Square sizes: 10mm, 12mm, 15mm, 20mm, 25mm
+
+Files are named as `tianzige_[papersize]_[square size]mm.pdf`. Combinations where the square size would be too large for the paper format are automatically skipped.
+
 ## Python API
 
 You can also use Tianzige in your Python code:

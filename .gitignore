@@ -44,7 +44,7 @@ build/
 
 # PDF files
 *.pdf
-!sample_pdf/*.pdf
+!sample-pdf/*.pdf
 
 # Testing
 .coverage
