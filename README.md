@@ -1,5 +1,8 @@
 # Tianzige (田字格)
 
+[![Tests](https://github.com/username/tianzige/actions/workflows/test.yml/badge.svg)](https://github.com/username/tianzige/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/username/tianzige/branch/main/graph/badge.svg)](https://codecov.io/gh/username/tianzige)
+
 A Python tool to generate Tianzige (田字格) writing grid PDFs for Chinese character practice.
 
 ## Installation
@@ -127,12 +130,48 @@ The `sample_pdf` directory contains example outputs:
 
 ## Development
 
+### Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/username/tianzige.git
+cd tianzige
+```
+
+2. Install development dependencies:
+```bash
+pip install -e ".[dev]"
+```
+
+### Testing
+
+Run tests with coverage:
+```bash
+pytest --cov=tianzige tests/
+```
+
+The project uses GitHub Actions for continuous integration testing on:
+- Multiple Python versions (3.10, 3.11, 3.12)
+- Multiple operating systems (Linux, Windows, macOS)
+
+Coverage reports are automatically uploaded to Codecov.
+
 ### Git Configuration
 
 The repository includes a `.gitignore` file configured for Python development with specific rules for PDF files:
 - Ignores all PDF files by default (`*.pdf`)
 - Allows sample PDFs in the `sample_pdf` directory (`!sample_pdf/*.pdf`)
 - Includes standard Python, virtual environment, and IDE ignores
+- Ignores test coverage files (`coverage.xml`, `.coverage`)
+
+### CI/CD Setup
+
+For maintainers, to enable coverage reporting:
+
+1. Sign up at [Codecov](https://codecov.io)
+2. Add your repository
+3. Get the Codecov token
+4. Add the token as a GitHub repository secret named `CODECOV_TOKEN`
 
 ## License
 

@@ -30,6 +30,12 @@ dependencies = [
     "reportlab>=4.0.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+]
+
 [project.urls]
 Documentation = "https://github.com/username/tianzige#readme"
 Source = "https://github.com/username/tianzige"
