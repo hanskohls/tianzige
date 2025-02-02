@@ -1,6 +1,6 @@
 """Tianzige (田字格) writing grid generator."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .core import create_tianzige
 

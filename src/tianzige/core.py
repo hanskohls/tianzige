@@ -79,19 +79,23 @@ def create_tianzige(
     width = 210*mm - margins['left'] - margins['right']
     height = 297*mm - margins['top'] - margins['bottom']
     
-    # Calculate number of squares that fit
+    # Calculate number of complete squares that fit
     cols = int(width // square_size_pt)
     rows = int(height // square_size_pt)
+    
+    # Calculate actual grid width and height
+    grid_width = cols * square_size_pt
+    grid_height = rows * square_size_pt
     
     # Draw vertical lines
     for i in range(cols + 1):
         x = margins['left'] + i * square_size_pt
-        c.line(x, margins['bottom'], x, 297*mm - margins['top'])
+        c.line(x, margins['bottom'], x, margins['bottom'] + grid_height)
     
     # Draw horizontal lines
     for i in range(rows + 1):
         y = margins['bottom'] + i * square_size_pt
-        c.line(margins['left'], y, 210*mm - margins['right'], y)
+        c.line(margins['left'], y, margins['left'] + grid_width, y)
     
     # Draw inner grid lines if requested
     if show_inner_grid:
@@ -100,11 +104,11 @@ def create_tianzige(
         # Draw vertical inner lines
         for i in range(cols):
             x = margins['left'] + i * square_size_pt + square_size_pt/2
-            c.line(x, margins['bottom'], x, 297*mm - margins['top'])
+            c.line(x, margins['bottom'], x, margins['bottom'] + grid_height)
         
         # Draw horizontal inner lines
         for i in range(rows):
             y = margins['bottom'] + i * square_size_pt + square_size_pt/2
-            c.line(margins['left'], y, 210*mm - margins['right'], y)
+            c.line(margins['left'], y, margins['left'] + grid_width, y)
     
     c.save()
