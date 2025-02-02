@@ -39,3 +39,8 @@ tianzige = "tianzige.__main__:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tianzige"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning:reportlab.*:"
+]

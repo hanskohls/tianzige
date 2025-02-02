@@ -137,12 +137,20 @@ def create_tianzige(
         margin_left: Left margin in mm
         margin_right: Right margin in mm
         show_inner_grid: Whether to show internal grid lines
+        page_size: Page size (a3, a4, a5, a6, b4, b5, letter, legal)
+        min_horizontal: Minimum number of horizontal boxes
+        min_vertical: Minimum number of vertical boxes
         
     Raises:
-        ValueError: If hex color format is invalid
+        ValueError: If hex color format is invalid, margins are negative,
+                   square size is too large, or page size is invalid
     """
     if not validate_hex_color(line_color):
         raise ValueError("Invalid hex color format. Use format: #RRGGBB")
+
+    # Validate margins
+    if margin_top < 0 or margin_bottom < 0 or margin_left < 0 or margin_right < 0:
+        raise ValueError("Margins cannot be negative")
 
     # Convert margins to points (PDF units)
     margins = {
@@ -152,8 +160,18 @@ def create_tianzige(
         'right': margin_right * mm
     }
 
-    # Get page size
-    page_width, page_height = PAGE_SIZES[page_size.lower()]
+    # Validate and get page size
+    page_size_lower = page_size.lower()
+    if page_size_lower not in PAGE_SIZES:
+        raise ValueError(f"Invalid page size. Must be one of: {', '.join(PAGE_SIZES.keys())}")
+    page_width, page_height = PAGE_SIZES[page_size_lower]
+
+    # Validate square size
+    if square_size is not None:
+        if square_size <= 0:
+            raise ValueError("Square size must be positive")
+        if square_size * mm > min(page_width, page_height):
+            raise ValueError("Square size is too large for the selected page size")
     
     # Create PDF with selected page size
     c = canvas.Canvas(output_file, pagesize=PAGE_SIZES[page_size.lower()])
