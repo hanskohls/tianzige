@@ -15,15 +15,15 @@ Basic usage:
 tianzige output.pdf
 ```
 
-This will create a PDF file with default settings (20mm squares, gray lines).
+This will create a PDF file with default settings (15mm squares, gray lines, optimized margins).
 
 ### Options
 
 - `-c, --color`: Line color in hex format (default: #808080)
-- `-s, --size`: Size of each square in mm (default: 20)
-- `--margin-top`: Top margin in mm (default: 20)
-- `--margin-bottom`: Bottom margin in mm (default: 20)
-- `--margin-left`: Left margin in mm (default: 20)
+- `-s, --size`: Size of each square in mm (default: 15)
+- `--margin-top`: Top margin in mm (default: 15)
+- `--margin-bottom`: Bottom margin in mm (default: 15)
+- `--margin-left`: Left margin in mm (default: 10)
 - `--margin-right`: Right margin in mm (default: 20)
 - `--no-inner-grid`: Disable inner grid lines
 - `-v, --version`: Show version information
@@ -55,10 +55,10 @@ from tianzige import create_tianzige
 create_tianzige(
     "output.pdf",
     line_color="#808080",
-    square_size=20,
-    margin_top=20,
-    margin_bottom=20,
-    margin_left=20,
+    square_size=15,
+    margin_top=15,
+    margin_bottom=15,
+    margin_left=10,
     margin_right=20,
     show_inner_grid=True
 )

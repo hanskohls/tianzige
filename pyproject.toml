@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tianzige"
-version = "0.1.1"
+version = "0.1.2"
 description = "Generate Tianzige (田字格) writing grid PDFs for Chinese character practice"
 readme = "README.md"
 requires-python = ">=3.10"

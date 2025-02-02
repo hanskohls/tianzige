@@ -24,13 +24,13 @@ Examples:
                       version=f'%(prog)s {__version__}')
     parser.add_argument('--color', '-c', default='#808080',
                       help='Line color in hex format (e.g., #808080)')
-    parser.add_argument('--size', '-s', type=float, default=20,
+    parser.add_argument('--size', '-s', type=float, default=15,
                       help='Size of each square in mm')
-    parser.add_argument('--margin-top', type=float, default=20,
+    parser.add_argument('--margin-top', type=float, default=15,
                       help='Top margin in mm')
-    parser.add_argument('--margin-bottom', type=float, default=20,
+    parser.add_argument('--margin-bottom', type=float, default=15,
                       help='Bottom margin in mm')
-    parser.add_argument('--margin-left', type=float, default=20,
+    parser.add_argument('--margin-left', type=float, default=10,
                       help='Left margin in mm')
     parser.add_argument('--margin-right', type=float, default=20,
                       help='Right margin in mm')
