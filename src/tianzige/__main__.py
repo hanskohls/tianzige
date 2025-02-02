@@ -11,8 +11,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  tianzige output.pdf                    Generate grid with default settings
-  tianzige -c "#000000" output.pdf       Generate grid with black lines
+  tianzige output.pdf                    Generate grid with default settings (A4)
+  tianzige -p a5 output.pdf             Generate grid in A5 size
+  tianzige -c "#000000" output.pdf      Generate grid with black lines
   tianzige -s 25 output.pdf             Generate grid with 25mm squares
   tianzige --no-inner-grid output.pdf   Generate grid without inner lines
         """
@@ -24,8 +25,12 @@ Examples:
                       version=f'%(prog)s {__version__}')
     parser.add_argument('--color', '-c', default='#808080',
                       help='Line color in hex format (e.g., #808080)')
-    parser.add_argument('--size', '-s', type=float, default=15,
-                      help='Size of each square in mm')
+    parser.add_argument('--size', '-s', type=float,
+                      help='Size of each square in mm (default: auto-calculated based on page size)')
+    parser.add_argument('--page-size', '-p', 
+                      choices=['a4', 'a5', 'a6', 'a3', 'b4', 'b5', 'letter', 'legal'],
+                      default='a4', 
+                      help='Page size (default: a4)')
     parser.add_argument('--margin-top', type=float, default=15,
                       help='Top margin in mm')
     parser.add_argument('--margin-bottom', type=float, default=15,
@@ -48,7 +53,8 @@ Examples:
             args.margin_bottom,
             args.margin_left,
             args.margin_right,
-            not args.no_inner_grid
+            not args.no_inner_grid,
+            args.page_size
         )
         print(f"Generated Tianzige grid: {args.output}")
     except ValueError as e:
