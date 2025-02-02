@@ -11,11 +11,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  tianzige output.pdf                    Generate grid with default settings (A4)
-  tianzige -p a5 output.pdf             Generate grid in A5 size
-  tianzige -c "#000000" output.pdf      Generate grid with black lines
-  tianzige -s 25 output.pdf             Generate grid with 25mm squares
-  tianzige --no-inner-grid output.pdf   Generate grid without inner lines
+  tianzige output.pdf                     Generate grid with default settings (A4, min 10 boxes)
+  tianzige -p a5 output.pdf              Generate grid in A5 size
+  tianzige -c "#000000" output.pdf       Generate grid with black lines
+  tianzige -s 25 output.pdf              Generate grid with 25mm squares (no minimum)
+  tianzige --min-horizontal 12 output.pdf Generate grid with at least 12 horizontal boxes
+  tianzige --min-vertical 15 output.pdf  Generate grid with at least 15 vertical boxes
+  tianzige --no-inner-grid output.pdf    Generate grid without inner lines
         """
     )
     
@@ -26,7 +28,11 @@ Examples:
     parser.add_argument('--color', '-c', default='#808080',
                       help='Line color in hex format (e.g., #808080)')
     parser.add_argument('--size', '-s', type=float,
-                      help='Size of each square in mm (default: auto-calculated based on page size)')
+                      help='Size of each square in mm (default: auto-calculated to fit minimum boxes)')
+    parser.add_argument('--min-horizontal', type=int, default=None,
+                      help='Minimum number of horizontal boxes (default: 10 if size not specified)')
+    parser.add_argument('--min-vertical', type=int, default=None,
+                      help='Minimum number of vertical boxes (default: 10 if size not specified)')
     parser.add_argument('--page-size', '-p', 
                       choices=['a4', 'a5', 'a6', 'a3', 'b4', 'b5', 'letter', 'legal'],
                       default='a4', 
@@ -35,9 +41,9 @@ Examples:
                       help='Top margin in mm')
     parser.add_argument('--margin-bottom', type=float, default=15,
                       help='Bottom margin in mm')
-    parser.add_argument('--margin-left', type=float, default=10,
+    parser.add_argument('--margin-left', type=float, default=20,
                       help='Left margin in mm')
-    parser.add_argument('--margin-right', type=float, default=20,
+    parser.add_argument('--margin-right', type=float, default=10,
                       help='Right margin in mm')
     parser.add_argument('--no-inner-grid', action='store_true',
                       help='Disable inner grid lines')
@@ -54,7 +60,9 @@ Examples:
             args.margin_left,
             args.margin_right,
             not args.no_inner_grid,
-            args.page_size
+            args.page_size,
+            args.min_horizontal,
+            args.min_vertical
         )
         print(f"Generated Tianzige grid: {args.output}")
     except ValueError as e:

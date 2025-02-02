@@ -21,16 +21,16 @@ PAGE_SIZES = {
 
 PageSizeType = Literal['a4', 'a5', 'a6', 'a3', 'b4', 'b5', 'letter', 'legal']
 
-def calculate_square_size(
+def calculate_dimensions(
     page_width: float,
     page_height: float,
     margin_left: float,
     margin_right: float,
     margin_top: float,
     margin_bottom: float,
-    min_squares: int = 10
-) -> float:
-    """Calculate optimal square size to ensure minimum number of squares fit.
+    square_size: float
+) -> Tuple[int, int]:
+    """Calculate how many squares can fit in each dimension.
     
     Args:
         page_width: Page width in points
@@ -39,19 +39,50 @@ def calculate_square_size(
         margin_right: Right margin in points
         margin_top: Top margin in points
         margin_bottom: Bottom margin in points
-        min_squares: Minimum number of squares required per row/column
+        square_size: Size of each square in points
         
     Returns:
-        Optimal square size in mm
+        Tuple of (horizontal_boxes, vertical_boxes)
     """
-    # Available space in points
     available_width = page_width - margin_left - margin_right
     available_height = page_height - margin_top - margin_bottom
     
-    # Calculate maximum square size that allows min_squares in both dimensions
+    horizontal_boxes = int(available_width / square_size)
+    vertical_boxes = int(available_height / square_size)
+    
+    return horizontal_boxes, vertical_boxes
+
+def calculate_required_size(
+    page_width: float,
+    page_height: float,
+    margin_left: float,
+    margin_right: float,
+    margin_top: float,
+    margin_bottom: float,
+    min_horizontal: int,
+    min_vertical: int
+) -> float:
+    """Calculate required square size to fit minimum number of boxes.
+    
+    Args:
+        page_width: Page width in points
+        page_height: Page height in points
+        margin_left: Left margin in points
+        margin_right: Right margin in points
+        margin_top: Top margin in points
+        margin_bottom: Bottom margin in points
+        min_horizontal: Minimum number of horizontal boxes
+        min_vertical: Minimum number of vertical boxes
+        
+    Returns:
+        Required square size in mm
+    """
+    available_width = page_width - margin_left - margin_right
+    available_height = page_height - margin_top - margin_bottom
+    
     max_square_size = min(
-        available_width / min_squares,
-        available_height / min_squares
+        available_width / min_horizontal,
+        available_height / min_vertical
     )
     
     # Convert to mm and round down to nearest 0.5mm for cleaner sizes
@@ -88,10 +119,12 @@ def create_tianzige(
     square_size: Union[float, None] = None,
     margin_top: float = 15,
     margin_bottom: float = 15,
-    margin_left: float = 10,
-    margin_right: float = 20,
+    margin_left: float = 20,
+    margin_right: float = 10,
     show_inner_grid: bool = True,
-    page_size: PageSizeType = 'a4'
+    page_size: PageSizeType = 'a4',
+    min_horizontal: Union[int, None] = None,
+    min_vertical: Union[int, None] = None
 ) -> None:
     """Create a PDF with tian zi ge grid.
     
@@ -129,13 +162,55 @@ def create_tianzige(
     rgb_color = hex_to_rgb(line_color)
     c.setStrokeColorRGB(*rgb_color)
     
-    # Calculate square size if not provided
+    # Handle square size and minimum box requirements
     if square_size is None:
-        square_size = calculate_square_size(
+        # Use default minimums if none provided
+        min_h = min_horizontal if min_horizontal is not None else 10
+        min_v = min_vertical if min_vertical is not None else 10
+        square_size = calculate_required_size(
             page_width, page_height,
             margins['left'], margins['right'],
-            margins['top'], margins['bottom']
+            margins['top'], margins['bottom'],
+            min_h, min_v
         )
+    else:
+        # If size is provided, check against minimums if they're specified
+        square_size_pt = square_size * mm
+        h_boxes, v_boxes = calculate_dimensions(
+            page_width, page_height,
+            margins['left'], margins['right'],
+            margins['top'], margins['bottom'],
+            square_size_pt
+        )
+        
+        if (min_horizontal is not None or min_vertical is not None):
+            error_msg = []
+            if min_horizontal is not None and h_boxes < min_horizontal:
+                required_size = calculate_required_size(
+                    page_width, page_height,
+                    margins['left'], margins['right'],
+                    margins['top'], margins['bottom'],
+                    min_horizontal, 1  # Only consider horizontal requirement
+                )
+                error_msg.append(
+                    f"Can only fit {h_boxes} horizontal boxes with {square_size}mm squares. "
+                    f"Maximum square size for {min_horizontal} horizontal boxes would be {required_size}mm."
+                )
+            
+            if min_vertical is not None and v_boxes < min_vertical:
+                required_size = calculate_required_size(
+                    page_width, page_height,
+                    margins['left'], margins['right'],
+                    margins['top'], margins['bottom'],
+                    1, min_vertical  # Only consider vertical requirement
+                )
+                error_msg.append(
+                    f"Can only fit {v_boxes} vertical boxes with {square_size}mm squares. "
+                    f"Maximum square size for {min_vertical} vertical boxes would be {required_size}mm."
+                )
+            
+            if error_msg:
+                raise ValueError("\n".join(error_msg))
     
     # Convert square size to points
     square_size_pt = square_size * mm
